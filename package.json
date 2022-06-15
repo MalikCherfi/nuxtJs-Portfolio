@@ -10,6 +10,7 @@
   },
   "proxy": "http://localhost:8000",
   "dependencies": {
+    "@braid/vue-formulate": "^2.5.3",
     "@nuxtjs/dotenv": "^1.4.1",
     "axios": "^0.27.2",
     "bootstrap-css-only": "^4.4.1",
