@@ -1,7 +1,9 @@
 <template>
   <div>
     <mdb-navbar position="top" dark transparent scrolling>
-      <mdb-navbar-brand href="#">Your Logo</mdb-navbar-brand>
+      <NuxtLink to="/" style="color: white; margin-right: 10px"
+        ><mdb-icon icon="home" size="2x"
+      /></NuxtLink>
 
       <mdb-navbar-toggler class="d-flex justify-content-between">
         <mdb-navbar-nav>

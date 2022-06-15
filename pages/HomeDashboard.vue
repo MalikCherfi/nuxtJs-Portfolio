@@ -13,12 +13,14 @@
       <img src="../static/water.png" id="water" />
     </div>
     <div class="content">
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam,
-        optio expedita? Inventore veritatis sint rem laborum molestiae minus,
-        quis ea quo at, dolor maiores ipsa eum necessitatibus incidunt? Dolorem,
-        quaerat!
-      </p>
+      <div class="d-flex justify-content-around">
+        <NuxtLink to="/Projects" class="menu">
+          <h2 style="font-size: 5em">Projets</h2>
+        </NuxtLink>
+        <NuxtLink to="/Competences" class="menu">
+          <h2 style="font-size: 5em">Compétences</h2>
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>
@@ -131,6 +133,21 @@ export default {
   background: #094b65;
   display: flex;
   flex-direction: column;
+}
+
+.menu {
+  font-family: "Rancho", cursive;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  text-shadow: 5px 5px black;
+  transition-duration: 300ms;
+}
+
+.menu:hover {
+  transform: translateY(-10px) translateX(-10px);
+  text-shadow: 10px 10px black;
+  transition-duration: 300ms;
 }
 
 .content::before {

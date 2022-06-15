@@ -5,22 +5,26 @@
       class="d-flex justify-content-around position-relative"
       style="margin-top: 50vh; transform: translateY(-50%); z-index: 3"
     >
-      <a @click="login = true">
+      <a @click="modalAdd = true">
         <h1 class="menu">Ajouter</h1>
       </a>
-      <h1 class="menu">Modifier</h1>
+      <a @click="modalChooseProjectUpdate = true">
+        <h1 class="menu">Modifier</h1>
+      </a>
     </div>
     <div
       class="d-flex justify-content-center position-relative"
       style="transform: translateY(-50%); z-index: 3"
     >
-      <h1 class="menu">Supprimer</h1>
+      <a @click="modalDelete = true">
+        <h1 class="menu">Supprimer</h1>
+      </a>
     </div>
     <!-- /MENU -->
 
     <!-- Modal Add -->
     <mdb-container>
-      <mdb-modal :show="login" @close="login = false">
+      <mdb-modal :show="modalAdd" @close="modalAdd = false">
         <mdb-modal-header class="text-center">
           <mdb-modal-title tag="h4" bold class="w-100"
             >Ajouter un projet</mdb-modal-title
@@ -54,7 +58,7 @@
 
           <mdb-modal-footer center>
             <input
-              @click="login = false"
+              @click="modalAdd = false"
               class="btn btn-unique"
               type="submit"
             />
@@ -65,8 +69,133 @@
     <!-- /Modal Add -->
 
     <!-- Modal Delete -->
+    <mdb-container>
+      <mdb-modal :show="modalDelete" @close="modalDelete = false">
+        <mdb-modal-header class="text-center">
+          <mdb-modal-title tag="h4" bold class="w-100"
+            >Supprimer un projet</mdb-modal-title
+          >
+        </mdb-modal-header>
 
+        <mdb-modal-body class="mx-3 grey-text">
+          <mdb-container class="d-flex flex-wrap">
+            <mdb-card
+              :key="index"
+              v-for="(project, index) in projects"
+              style="margin: 10px"
+            >
+              <mdb-card-image
+                :src="`${baseUrl}${project.images.principal}`"
+                :alt="project.title"
+              ></mdb-card-image>
+              <mdb-card-body>
+                <div class="d-flex flex-column align-items-center">
+                  <mdb-card-title>{{ project.title }}</mdb-card-title>
+
+                  <mdb-btn @click="deleteProject(project.id)" color="primary"
+                    >Supprimer</mdb-btn
+                  >
+                </div>
+              </mdb-card-body>
+            </mdb-card>
+          </mdb-container>
+        </mdb-modal-body>
+      </mdb-modal>
+    </mdb-container>
     <!-- /Modal Delete -->
+
+    <!-- Modal Update -->
+    <!-- Choose Project -->
+    <mdb-container>
+      <mdb-modal
+        :show="modalChooseProjectUpdate"
+        @close="modalChooseProjectUpdate = false"
+      >
+        <mdb-modal-header class="text-center">
+          <mdb-modal-title tag="h4" bold class="w-100"
+            >Choisir le projet à modifier</mdb-modal-title
+          >
+        </mdb-modal-header>
+
+        <mdb-modal-body class="mx-3 grey-text">
+          <mdb-container class="d-flex flex-wrap">
+            <mdb-card
+              :key="index"
+              v-for="(project, index) in projects"
+              style="margin: 10px"
+            >
+              <mdb-card-image
+                :src="`${baseUrl}${project.images.principal}`"
+                :alt="project.title"
+              ></mdb-card-image>
+              <mdb-card-body>
+                <div class="d-flex flex-column align-items-center">
+                  <mdb-card-title>{{ project.title }}</mdb-card-title>
+
+                  <mdb-btn
+                    @click="
+                      (modalUpdate = true),
+                        (modalChooseProjectUpdate = false),
+                        (idToUpdate = project.id)
+                    "
+                    color="primary"
+                    >Modifier</mdb-btn
+                  >
+                </div>
+              </mdb-card-body>
+            </mdb-card>
+          </mdb-container>
+        </mdb-modal-body>
+      </mdb-modal>
+    </mdb-container>
+    <!-- /Choose Project -->
+    <mdb-container>
+      <mdb-modal :show="modalUpdate" @close="modalUpdate = false">
+        <mdb-modal-header class="text-center">
+          <mdb-modal-title tag="h4" bold class="w-100"
+            >Modifier un projet</mdb-modal-title
+          >
+        </mdb-modal-header>
+
+        <form
+          enctype="multipart/form-data"
+          @submit.prevent="updateProject(idToUpdate)"
+        >
+          <mdb-modal-body class="mx-3 grey-text">
+            <mdb-input
+              v-model="title"
+              label="Nom du projet"
+              type="text"
+              class="mb-5"
+            />
+            <mdb-input v-model="link" label="Lien vers le projet" type="text" />
+            <mdb-input v-model="details" label="Description" type="textarea" />
+            <mdb-input v-model="years" label="Année" type="number" />
+            <input
+              type="file"
+              name="image.principal"
+              @change="processPrincipalFile($event)"
+            />
+            <input
+              style="margin-top: 20px"
+              multiple
+              type="file"
+              name="image.secondary"
+              @change="processSecondaryFile($event)"
+            />
+          </mdb-modal-body>
+
+          <mdb-modal-footer center>
+            <input
+              @click="modalUpdate = false"
+              class="btn btn-unique"
+              type="submit"
+            />
+          </mdb-modal-footer>
+        </form>
+      </mdb-modal>
+    </mdb-container>
+    <!-- /Modal Update -->
 
     <div style="height: 100vh">
       <div class="view intro-2" style="height: 100vh">
@@ -163,29 +292,6 @@
         </div>
       </div>
     </div>
-    <mdb-container
-      :key="index"
-      v-for="(project, index) in projects"
-      class="w-25 position-relative"
-      style="margin-top: 100px; z-index: 3"
-    >
-      <mdb-card>
-        <mdb-card-image
-          :src="`${baseUrl}${project.images.principal}`"
-          :alt="project.title"
-        ></mdb-card-image>
-        <mdb-card-body>
-          <div class="d-flex flex-column align-items-center">
-            <mdb-card-title>{{ project.title }}</mdb-card-title>
-
-            <mdb-btn @click="deleteProject(project.id)" color="primary"
-              >Supprimer</mdb-btn
-            >
-          </div>
-        </mdb-card-body>
-      </mdb-card>
-    </mdb-container>
-
     <!-- Background Images -->
     <img class="background" src="@/static/forest.png" id="forest" />
     <img class="background" src="@/static/rocks.png" id="rocks" />
@@ -242,7 +348,11 @@ export default {
       principalImg: null,
       secondaryImg: [],
       projects: [],
-      login: false,
+      modalAdd: false,
+      modalDelete: false,
+      modalChooseProjectUpdate: false,
+      modalUpdate: false,
+      idToUpdate: null,
     };
   },
 
@@ -327,6 +437,46 @@ export default {
         });
     },
 
+    updateProject(id) {
+      const imgData = new FormData();
+
+      imgData.append("image.principal", this.principalImg);
+      for (let index = 0; index < this.secondaryImg.length; index += 1) {
+        imgData.append("image.secondary", this.secondaryImg[index]);
+      }
+
+      var data = {
+        title: this.title,
+        years: parseInt(this.years),
+        link: this.link,
+        details: this.details,
+      };
+
+      axios
+        .post("/upload", imgData)
+        .then((images) => {
+          axios
+            .put(`/post/${id}`, {
+              ...data,
+              images: {
+                principal: `/images/${images.data[0].principal}`,
+                secondary: images.data[1].secondary.map(
+                  (imgName) => `/images/${imgName}`
+                ),
+              },
+            })
+            .then(() => {
+              console.log("project update");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
     getUsers() {
       axios
         .get("/users")
@@ -360,9 +510,12 @@ export default {
   color: white;
   font-size: 5em;
   cursor: pointer;
+  text-shadow: 5px 5px black;
+  transition-duration: 300ms;
 }
 
 .menu:hover {
   transform: translateY(-10px) translateX(-10px);
+  transition-duration: 300ms;
 }
 </style>
