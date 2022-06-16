@@ -42,18 +42,71 @@
             <mdb-input v-model="link" label="Lien vers le projet" type="text" />
             <mdb-input v-model="details" label="Description" type="textarea" />
             <mdb-input v-model="years" label="Année" type="number" />
-            <input
-              type="file"
-              name="image.principal"
-              @change="processPrincipalFile($event)"
-            />
-            <input
-              style="margin-top: 20px"
-              multiple
-              type="file"
-              name="image.secondary"
-              @change="processSecondaryFile($event)"
-            />
+            <!-- Input File Principal Img-->
+            <div class="w-100 d-flex justify-content-center">
+              <label
+                for="file1"
+                style="
+                  cursor: pointer;
+
+                  padding: 2em;
+                  border-radius: 0.25em;
+                  box-shadow: 0 0 1em rgba(0, 0, 0, 0.25);
+                "
+              >
+                <div class="d-flex justify-content-around align-items-center">
+                  <img
+                    class="w-25"
+                    style="height: auto"
+                    v-if="imgPrincipalShow != null"
+                    :src="imgPrincipalShow"
+                  />
+                  <p style="margin: 0px">Sélectionner une image</p>
+                </div>
+                <input
+                  style="display: none"
+                  type="file"
+                  name="image.principal"
+                  id="file1"
+                  @change="processPrincipalFile($event), readImage($event)"
+                />
+              </label>
+            </div>
+            <!-- /Input File Principal Img-->
+            <!-- Input File Secondary Img -->
+            <div class="w-100 d-flex justify-content-center">
+              <label
+                for="file2"
+                style="
+                  cursor: pointer;
+                  padding: 2em;
+                  border-radius: 0.25em;
+                  box-shadow: 0 0 1em rgba(0, 0, 0, 0.25);
+                "
+              >
+                <div
+                  class="d-flex justify-content-around align-items-center flex-wrap"
+                >
+                  <img
+                    :key="index"
+                    v-for="(img, index) in imgSecondaryShow"
+                    class="w-25"
+                    style="height: auto; margin: 5px"
+                    :src="img"
+                  />
+                  <p style="margin: 0px">Sélectionner une image</p>
+                </div>
+                <input
+                  style="margin-top: 20px; display: none"
+                  multiple
+                  type="file"
+                  name="image.secondary"
+                  id="file2"
+                  @change="processSecondaryFile($event), readImage($event)"
+                />
+              </label>
+            </div>
+            <!-- /Input File Secondary Img -->
           </mdb-modal-body>
 
           <mdb-modal-footer center>
@@ -160,7 +213,7 @@
 
         <form
           enctype="multipart/form-data"
-          @submit="updateProject(idToUpdate), (modalUpdate = false)"
+          @submit.prevent="updateProject(idToUpdate), (modalUpdate = false)"
         >
           <mdb-modal-body class="mx-3 grey-text">
             <mdb-input
@@ -264,101 +317,6 @@
     </mdb-container>
     <!-- /Modal Update -->
 
-    <div style="height: 100vh">
-      <div class="view intro-2" style="height: 100vh">
-        <div class="full-bg-img">
-          <div class="mask rgba-purple-light">
-            <div class="container flex-center">
-              <div class="white-text text-center">
-                <form
-                  style="height: 500px; width: 400px"
-                  @submit.prevent="postProject"
-                  action="/upload"
-                  method="post"
-                  enctype="multipart/form-data"
-                >
-                  <p class="h4 text-center mb-4">Ajouter un projet</p>
-                  <label for="defaultFormRegisterNameEx" class="grey-text"
-                    >Nom du Projet</label
-                  >
-                  <input
-                    v-model="title"
-                    type="text"
-                    id="defaultFormRegisterNameEx"
-                    class="form-control"
-                  />
-                  <br />
-                  <label for="defaultFormRegisterEmailEx" class="grey-text"
-                    >lien vers le projet</label
-                  >
-                  <input
-                    v-model="link"
-                    type="text"
-                    id="defaultFormRegisterEmailEx"
-                    class="form-control"
-                  />
-                  <br />
-                  <label for="defaultFormRegisterEmailEx" class="grey-text"
-                    >Description</label
-                  >
-                  <input
-                    v-model="details"
-                    type="text"
-                    id="defaultFormRegisterEmailEx"
-                    class="form-control"
-                  />
-                  <br />
-                  <label for="defaultFormRegisterEmailEx" class="grey-text"
-                    >Année</label
-                  >
-                  <input
-                    v-model="years"
-                    type="number"
-                    id="defaultFormRegisterEmailEx"
-                    class="form-control"
-                  />
-                  <br />
-                  <!-- INPUT FILE -->
-
-                  <div class="custom-file">
-                    <input
-                      type="file"
-                      name="image.principal"
-                      class="custom-file-input"
-                      id="inputGroupFile01"
-                      aria-describedby="inputGroupFileAddon01"
-                      @change="processPrincipalFile($event)"
-                    />
-                    <label class="custom-file-label" for="inputGroupFile01"
-                      >Choose file</label
-                    >
-                  </div>
-                  <div class="custom-file">
-                    <input
-                      multiple
-                      type="file"
-                      name="image.secondary"
-                      class="custom-file-input"
-                      id="inputGroupFile02"
-                      aria-describedby="inputGroupFileAddon01"
-                      @change="processSecondaryFile($event)"
-                    />
-                    <label class="custom-file-label" for="inputGroupFile02"
-                      >Choose file</label
-                    >
-                  </div>
-
-                  <!-- /INPUT FILE -->
-                  <div class="text-center mt-4">
-                    <input class="btn btn-unique" type="submit" />
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
     <!-- Background Images -->
     <img class="background" src="@/static/forest.png" id="forest" />
     <img class="background" src="@/static/rocks.png" id="rocks" />
@@ -423,6 +381,7 @@ export default {
       formValue: {},
       imgPrincipalShow: null,
       imgSecondaryShow: [],
+      secondaryImgIsShow: false,
     };
   },
 
@@ -442,6 +401,9 @@ export default {
       this.formValue.link = project.link;
       this.formValue.details = project.details;
       this.formValue.years = project.years;
+      this.imgPrincipalShow = project.imagesPath.principal;
+      this.imgSecondaryShow = project.imagesPath.secondary;
+      this.secondaryImgIsShow = true;
     },
 
     readImage(event) {
@@ -454,15 +416,21 @@ export default {
         return;
       }
 
-      console.log(event.target.id);
-
       const reader = new FileReader();
       reader.addEventListener("load", (e) => {
         if (event.target.id === "file1") {
           this.imgPrincipalShow = e.target.result;
         } else {
-          for (let index = 0; index < event.target.files.length; index++) {
-            this.imgSecondaryShow.push(e.target.result);
+          if (this.secondaryImgIsShow == true) {
+            this.imgSecondaryShow = [];
+            this.secondaryImgIsShow = false;
+            for (let index = 0; index < event.target.files.length; index++) {
+              this.imgSecondaryShow.push(e.target.result);
+            }
+          } else {
+            for (let index = 0; index < event.target.files.length; index++) {
+              this.imgSecondaryShow.push(e.target.result);
+            }
           }
         }
       });
@@ -502,10 +470,14 @@ export default {
           axios
             .post("/post", {
               ...data,
+              imagesPath: {
+                principal: this.imgPrincipalShow,
+                secondary: this.imgSecondaryShow.map((path) => path),
+              },
               images: {
                 principal: `/images/${images.data[0].principal}`,
                 secondary: images.data[1].secondary.map(
-                  (imgName) => `/images/${imgName}`
+                  (imgPath) => `/images/${imgPath}`
                 ),
               },
             })
@@ -547,38 +519,68 @@ export default {
         details: this.formValue.details,
       };
 
-      const imgData = new FormData();
+      var project = this.projects.filter((project) => project.id == id);
 
-      imgData.append("image.principal", this.principalImg);
-      for (let index = 0; index < this.secondaryImg.length; index += 1) {
-        imgData.append("image.secondary", this.secondaryImg[index]);
+      if (
+        project[0].imagesPath.principal != this.imgPrincipalShow ||
+        project[0].imagesPath.secondary.filter(
+          (path) => path == this.imgSecondaryShow.map((path) => path)
+        ).length == 0
+      ) {
+        const imgData = new FormData();
+
+        imgData.append("image.principal", this.principalImg);
+        for (let index = 0; index < this.secondaryImg.length; index += 1) {
+          imgData.append("image.secondary", this.secondaryImg[index]);
+        }
+
+        axios
+          .post("/upload", imgData)
+          .then((images) => {
+            axios
+              .put(`/post/${id}`, {
+                ...data,
+                imagesPath: {
+                  principal: this.imgPrincipalShow,
+                  secondary: this.imgSecondaryShow.map((path) => path),
+                },
+                images: {
+                  principal: `/images/${images.data[0].principal}`,
+                  secondary: images.data[1].secondary.map(
+                    (imgName) => `/images/${imgName}`
+                  ),
+                },
+              })
+              .then(() => {
+                console.log("project update");
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        axios
+          .put(`/post/${id}`, {
+            ...data,
+            imagesPath: {
+              principal: this.imgPrincipalShow,
+              secondary: this.imgSecondaryShow.map((path) => path),
+            },
+            images: {
+              principal: project[0].images.principal,
+              secondary: project[0].images.secondary.map((imgPath) => imgPath),
+            },
+          })
+          .then(() => {
+            console.log("project update");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
-
-      console.log(imgData);
-
-      axios
-        .post("/upload", imgData)
-        .then((images) => {
-          axios
-            .put(`/post/${id}`, {
-              ...data,
-              images: {
-                principal: `/images/${images.data[0].principal}`,
-                secondary: images.data[1].secondary.map(
-                  (imgName) => `/images/${imgName}`
-                ),
-              },
-            })
-            .then(() => {
-              console.log("project update");
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
     },
 
     getUsers() {
