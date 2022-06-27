@@ -5,10 +5,10 @@
       class="d-flex justify-content-around position-relative"
       style="margin-top: 50vh; transform: translateY(-50%); z-index: 3"
     >
-      <a @click="modalAdd = true">
+      <a @click="(principalModal = true), (choice = 'Add')">
         <h1 class="menu">Ajouter</h1>
       </a>
-      <a @click="modalChooseProjectUpdate = true">
+      <a @click="(principalModal = true), (choice = 'Modify')">
         <h1 class="menu">Modifier</h1>
       </a>
     </div>
@@ -16,13 +16,94 @@
       class="d-flex justify-content-center position-relative"
       style="transform: translateY(-50%); z-index: 3"
     >
-      <a @click="modalDelete = true">
+      <a @click="(principalModal = true), (choice = 'Delete')">
         <h1 class="menu">Supprimer</h1>
       </a>
     </div>
     <!-- /MENU -->
 
-    <!-- Modal Add -->
+    <!-- principal Modal Choice between Project and Competence -->
+    <div>
+      <mdb-modal :show="principalModal" @close="principalModal = false">
+        <mdb-modal-header>
+          <mdb-modal-title>Choisir compétence ou projet</mdb-modal-title>
+        </mdb-modal-header>
+        <!-- Add Modal -->
+        <mdb-modal-footer v-if="choice == 'Add'">
+          <mdb-btn
+            color="secondary"
+            @click.native="(principalModal = false), (modalAdd = true)"
+            >Ajouter Projet</mdb-btn
+          >
+          <mdb-btn
+            color="primary"
+            @click.native="
+              (principalModal = false), (modalAddTechnologies = true)
+            "
+            >Ajouter Compétence</mdb-btn
+          >
+        </mdb-modal-footer>
+        <!-- /Add Modal -->
+        <!-- Modify Modal -->
+        <mdb-modal-footer v-if="choice == 'Modify'">
+          <mdb-btn
+            color="secondary"
+            @click.native="
+              (principalModal = false), (modalChooseProjectUpdate = true)
+            "
+            >Modifier Projet</mdb-btn
+          >
+          <mdb-btn color="primary" @click.native="principalModal = false"
+            >Modifier Compétence</mdb-btn
+          >
+        </mdb-modal-footer>
+        <!-- /Modify Modal -->
+        <!-- Delete Modal -->
+        <mdb-modal-footer v-if="choice == 'Delete'">
+          <mdb-btn
+            color="secondary"
+            @click.native="(principalModal = false), (modalDelete = true)"
+            >Supprimer Projet</mdb-btn
+          >
+          <mdb-btn color="primary" @click.native="principalModal = false"
+            >Supprimer Compétence</mdb-btn
+          >
+        </mdb-modal-footer>
+        <!-- /Delete Modal -->
+      </mdb-modal>
+    </div>
+    <!-- /principal Modal Choice between Project and Competence-->
+
+    <mdb-modal
+      :show="modalAddTechnologies"
+      @close="modalAddTechnologies = false"
+    >
+      <mdb-modal-header class="text-center">
+        <mdb-modal-title tag="h4" bold class="w-100"
+          >Ajouter une techno</mdb-modal-title
+        >
+      </mdb-modal-header>
+
+      <form enctype="multipart/form-data" @submit.prevent="postTechnologies">
+        <mdb-modal-body class="mx-3 grey-text">
+          <mdb-input
+            v-model="technologyName"
+            label="Nom"
+            type="text"
+          ></mdb-input>
+        </mdb-modal-body>
+
+        <mdb-modal-footer center>
+          <input
+            @click="modalAddTechnologies = false"
+            class="btn btn-unique"
+            type="submit"
+          />
+        </mdb-modal-footer>
+      </form>
+    </mdb-modal>
+
+    <!-- Modal Add Project-->
     <mdb-container>
       <mdb-modal :show="modalAdd" @close="modalAdd = false">
         <mdb-modal-header class="text-center">
@@ -42,6 +123,12 @@
             <mdb-input v-model="link" label="Lien vers le projet" type="text" />
             <mdb-input v-model="details" label="Description" type="textarea" />
             <mdb-input v-model="years" label="Année" type="number" />
+            <mdb-input
+              v-model="technologyName"
+              label="Technologie"
+              type="text"
+            />
+            <button @click="addTechnology">Add</button>
             <!-- Input File Principal Img-->
             <div class="w-100 d-flex justify-content-center">
               <label
@@ -119,9 +206,9 @@
         </form>
       </mdb-modal>
     </mdb-container>
-    <!-- /Modal Add -->
+    <!-- /Modal Add Project-->
 
-    <!-- Modal Delete -->
+    <!-- Modal Delete Project-->
     <mdb-container>
       <mdb-modal :show="modalDelete" @close="modalDelete = false">
         <mdb-modal-header class="text-center">
@@ -155,9 +242,9 @@
         </mdb-modal-body>
       </mdb-modal>
     </mdb-container>
-    <!-- /Modal Delete -->
+    <!-- /Modal Delete Project-->
 
-    <!-- Modal Update -->
+    <!-- Modal Update Project-->
     <!-- Choose Project -->
     <mdb-container>
       <mdb-modal
@@ -315,7 +402,7 @@
         </form>
       </mdb-modal>
     </mdb-container>
-    <!-- /Modal Update -->
+    <!-- /Modal Update Project-->
 
     <!-- Background Images -->
     <img class="background" src="@/static/forest.png" id="forest" />
@@ -372,7 +459,15 @@ export default {
       link: null,
       principalImg: null,
       secondaryImg: [],
+      technology: [],
+      idProject: null,
+
+      technologyName: [],
+
       projects: [],
+      principalModal: false,
+      choice: null,
+      modalAddTechnologies: false,
       modalAdd: false,
       modalDelete: false,
       modalChooseProjectUpdate: false,
@@ -445,6 +540,29 @@ export default {
     processSecondaryFile(event) {
       this.secondaryImg.push(event.target.files[0]);
     },
+
+    addTechnology() {
+      this.technology.push(this.technologyName);
+      this.technologyName = null;
+    },
+
+    postTechnologies(id) {
+      console.log(id);
+      for (let i = 0; i < this.technology.length; i++) {
+        var data = { id: id, name: this.technology[i] };
+        axios
+          .post("/technology", {
+            ...data,
+          })
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    },
+
     postProject() {
       const imgData = new FormData();
 
@@ -458,6 +576,7 @@ export default {
         years: parseInt(this.years),
         link: this.link,
         details: this.details,
+        // technology: this.technology,
       };
 
       for (var value of imgData.values()) {
@@ -481,7 +600,7 @@ export default {
                 ),
               },
             })
-            .then((res) => console.log(res))
+            .then((res) => this.postTechnologies(res.data.id))
             .catch((err) => console.log(err));
         })
         .catch((err) => {
