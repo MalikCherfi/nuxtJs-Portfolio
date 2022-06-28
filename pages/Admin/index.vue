@@ -74,6 +74,7 @@
     </div>
     <!-- /principal Modal Choice between Project and Competence-->
 
+    <!-- Modal Add Technologie -->
     <mdb-modal
       :show="modalAddTechnologies"
       @close="modalAddTechnologies = false"
@@ -102,6 +103,7 @@
         </mdb-modal-footer>
       </form>
     </mdb-modal>
+    <!-- /Modal Add Technologie -->
 
     <!-- Modal Add Project-->
     <mdb-container>
@@ -414,6 +416,10 @@
 
 <script>
 import axios from "@/helper/axios.config.js";
+const post = require("@/data/post.js");
+const get = require("@/data/get.js");
+const destroy = require("@/data/destroy.js");
+const update = require("@/data/update.js");
 import {
   mdbCard,
   mdbCardImage,
@@ -441,7 +447,6 @@ export default {
     mdbCardText,
     mdbBtn,
     mdbContainer,
-
     mdbIcon,
     mdbModal,
     mdbModalHeader,
@@ -452,6 +457,7 @@ export default {
   },
   data() {
     return {
+      // Description Project
       title: null,
       url: null,
       details: null,
@@ -460,11 +466,12 @@ export default {
       principalImg: null,
       secondaryImg: [],
       technology: [],
+      // id of project who is created
       idProject: null,
-
+      //
       technologyName: [],
-
       projects: [],
+      // Modal variable
       principalModal: false,
       choice: null,
       modalAddTechnologies: false,
@@ -473,6 +480,7 @@ export default {
       modalChooseProjectUpdate: false,
       modalUpdate: false,
       idToUpdate: null,
+      //
       formValue: {},
       imgPrincipalShow: null,
       imgSecondaryShow: [],
@@ -491,6 +499,7 @@ export default {
   },
 
   methods: {
+    // RESET FORM FOR UPDATE
     resetForm(project) {
       this.formValue.title = project.title;
       this.formValue.link = project.link;
@@ -546,88 +555,31 @@ export default {
       this.technologyName = null;
     },
 
-    postTechnologies(id) {
-      console.log(id);
-      for (let i = 0; i < this.technology.length; i++) {
-        var data = { id: id, name: this.technology[i] };
-        axios
-          .post("/technology", {
-            ...data,
-          })
-          .then((res) => {
-            console.log(res.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+    // API ROUTE FOR PROJECT
+    getProject() {
+      get.getProject().then((res) => (this.projects = res));
     },
 
     postProject() {
-      const imgData = new FormData();
-
-      imgData.append("image.principal", this.principalImg);
-      for (let index = 0; index < this.secondaryImg.length; index += 1) {
-        imgData.append("image.secondary", this.secondaryImg[index]);
-      }
-
       var data = {
         title: this.title,
         years: parseInt(this.years),
         link: this.link,
         details: this.details,
-        // technology: this.technology,
       };
 
-      for (var value of imgData.values()) {
-        console.log(value);
-      }
-
-      axios
-        .post("/upload", imgData)
-        .then((images) => {
-          axios
-            .post("/post", {
-              ...data,
-              imagesPath: {
-                principal: this.imgPrincipalShow,
-                secondary: this.imgSecondaryShow.map((path) => path),
-              },
-              images: {
-                principal: `/images/${images.data[0].principal}`,
-                secondary: images.data[1].secondary.map(
-                  (imgPath) => `/images/${imgPath}`
-                ),
-              },
-            })
-            .then((res) => this.postTechnologies(res.data.id))
-            .catch((err) => console.log(err));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
-    getProject() {
-      axios
-        .get("/post")
-        .then((res) => {
-          this.projects = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      post.postProject(
+        data,
+        this.principalImg,
+        this.secondaryImg,
+        this.imgPrincipalShow,
+        this.imgSecondaryShow,
+        this.technology
+      );
     },
 
     deleteProject(id) {
-      axios
-        .delete(`/post/${id}`)
-        .then(() => {
-          console.log("suppr");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      destroy.deleteProject(id);
     },
 
     updateProject(id) {
@@ -640,66 +592,13 @@ export default {
 
       var project = this.projects.filter((project) => project.id == id);
 
-      if (
-        project[0].imagesPath.principal != this.imgPrincipalShow ||
-        project[0].imagesPath.secondary.filter(
-          (path) => path == this.imgSecondaryShow.map((path) => path)
-        ).length == 0
-      ) {
-        const imgData = new FormData();
-
-        imgData.append("image.principal", this.principalImg);
-        for (let index = 0; index < this.secondaryImg.length; index += 1) {
-          imgData.append("image.secondary", this.secondaryImg[index]);
-        }
-
-        axios
-          .post("/upload", imgData)
-          .then((images) => {
-            axios
-              .put(`/post/${id}`, {
-                ...data,
-                imagesPath: {
-                  principal: this.imgPrincipalShow,
-                  secondary: this.imgSecondaryShow.map((path) => path),
-                },
-                images: {
-                  principal: `/images/${images.data[0].principal}`,
-                  secondary: images.data[1].secondary.map(
-                    (imgName) => `/images/${imgName}`
-                  ),
-                },
-              })
-              .then(() => {
-                console.log("project update");
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
-        axios
-          .put(`/post/${id}`, {
-            ...data,
-            imagesPath: {
-              principal: this.imgPrincipalShow,
-              secondary: this.imgSecondaryShow.map((path) => path),
-            },
-            images: {
-              principal: project[0].images.principal,
-              secondary: project[0].images.secondary.map((imgPath) => imgPath),
-            },
-          })
-          .then(() => {
-            console.log("project update");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
+      update.updateProject(
+        id,
+        data,
+        project,
+        this.imgPrincipalShow,
+        this.imgSecondaryShow
+      );
     },
 
     getUsers() {
