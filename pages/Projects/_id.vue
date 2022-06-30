@@ -115,9 +115,9 @@
 </template>
 
 <script>
+const get = require("@/data/get.js");
 import "viewerjs/dist/viewer.css";
 import { component as Viewer } from "v-viewer";
-import axios from "@/helper/axios.config.js";
 import { Slider, SliderItem } from "vue-easy-slider";
 import {
   mdbModal,
@@ -179,14 +179,7 @@ export default {
     },
 
     getProject(id) {
-      axios
-        .get(`/post/${id}`)
-        .then((res) => {
-          this.project = res.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      get.getOneProject(id).then((res) => (this.project = res));
 
       setTimeout(() => {
         this.isLoading = false;

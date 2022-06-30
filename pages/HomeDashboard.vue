@@ -68,14 +68,7 @@ export default {
     mdbMask,
     mdbIcon,
   },
-  data() {
-    return {
-      projects: [],
-    };
-  },
-  mounted() {
-    this.getProject();
-  },
+
   computed: {
     baseUrl() {
       return process.env.VUE_APP_API_URL;
@@ -89,18 +82,6 @@ export default {
   },
 
   methods: {
-    getProject() {
-      axios
-        .get("/post")
-        .then((res) => {
-          this.projects = res.data;
-          console.log(this.projects);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
-
     handleScroll() {
       var text = document.getElementById("text");
       var bird1 = document.getElementById("bird1");

@@ -36,7 +36,7 @@ export const postProject = (
             ),
           },
         })
-        .then((res) => postTechnologies(res.data.id, technology))
+        .then((res) => postTechnologies(technology, res.data.id))
         .catch((err) => console.log(err));
     })
     .catch((err) => {
@@ -44,12 +44,25 @@ export const postProject = (
     });
 };
 
-export const postTechnologies = (id, technology) => {
-  for (let i = 0; i < technology.length; i++) {
-    var data = { id: id, name: technology[i] };
+export const postTechnologies = (technology, id) => {
+  if (typeof technology == "array") {
+    for (let i = 0; i < technology.length; i++) {
+      var data = { id: id, name: technology[i] };
+      axios
+        .post("/technology", {
+          ...data,
+        })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  } else {
     axios
       .post("/technology", {
-        ...data,
+        ...technology,
       })
       .then((res) => {
         console.log(res.data);

@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import axios from "@/helper/axios.config.js";
+const get = require("@/data/get.js");
 import {
   mdbContainer,
   mdbRow,
@@ -134,15 +134,7 @@ export default {
   },
   methods: {
     getProject() {
-      axios
-        .get("/post")
-        .then((res) => {
-          this.projects = res.data;
-          console.log(this.projects);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      get.getProject().then((res) => (this.projects = res));
     },
   },
 };

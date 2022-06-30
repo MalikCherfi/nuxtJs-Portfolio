@@ -8,7 +8,7 @@
       <a @click="(principalModal = true), (choice = 'Add')">
         <h1 class="menu">Ajouter</h1>
       </a>
-      <a @click="(principalModal = true), (choice = 'Modify')">
+      <a @click="modalChooseProjectUpdate = true">
         <h1 class="menu">Modifier</h1>
       </a>
     </div>
@@ -32,7 +32,7 @@
         <mdb-modal-footer v-if="choice == 'Add'">
           <mdb-btn
             color="secondary"
-            @click.native="(principalModal = false), (modalAdd = true)"
+            @click.native="(principalModal = false), (modalAddProject = true)"
             >Ajouter Projet</mdb-btn
           >
           <mdb-btn
@@ -40,33 +40,25 @@
             @click.native="
               (principalModal = false), (modalAddTechnologies = true)
             "
-            >Ajouter Compétence</mdb-btn
+            >Ajouter Technologie</mdb-btn
           >
         </mdb-modal-footer>
         <!-- /Add Modal -->
-        <!-- Modify Modal -->
-        <mdb-modal-footer v-if="choice == 'Modify'">
-          <mdb-btn
-            color="secondary"
-            @click.native="
-              (principalModal = false), (modalChooseProjectUpdate = true)
-            "
-            >Modifier Projet</mdb-btn
-          >
-          <mdb-btn color="primary" @click.native="principalModal = false"
-            >Modifier Compétence</mdb-btn
-          >
-        </mdb-modal-footer>
-        <!-- /Modify Modal -->
         <!-- Delete Modal -->
         <mdb-modal-footer v-if="choice == 'Delete'">
           <mdb-btn
             color="secondary"
-            @click.native="(principalModal = false), (modalDelete = true)"
+            @click.native="
+              (principalModal = false), (modalDeleteProject = true)
+            "
             >Supprimer Projet</mdb-btn
           >
-          <mdb-btn color="primary" @click.native="principalModal = false"
-            >Supprimer Compétence</mdb-btn
+          <mdb-btn
+            color="primary"
+            @click.native="
+              (principalModal = false), (modalDeleteTechnologies = true)
+            "
+            >Supprimer Technologie</mdb-btn
           >
         </mdb-modal-footer>
         <!-- /Delete Modal -->
@@ -74,7 +66,7 @@
     </div>
     <!-- /principal Modal Choice between Project and Competence-->
 
-    <!-- Modal Add Technologie -->
+    <!-- Modal Add Technologies -->
     <mdb-modal
       :show="modalAddTechnologies"
       @close="modalAddTechnologies = false"
@@ -103,11 +95,48 @@
         </mdb-modal-footer>
       </form>
     </mdb-modal>
-    <!-- /Modal Add Technologie -->
+    <!-- /Modal Add Technologies -->
+
+    <!-- Modal Delete Technologies-->
+    <mdb-container>
+      <mdb-modal
+        :show="modalDeleteTechnologies"
+        @close="modalDeleteTechnologies = false"
+      >
+        <mdb-modal-header class="text-center">
+          <mdb-modal-title tag="h4" bold class="w-100"
+            >Supprimer une technologie</mdb-modal-title
+          >
+        </mdb-modal-header>
+
+        <mdb-modal-body class="mx-3 grey-text">
+          <mdb-container class="d-flex flex-wrap">
+            <mdb-card
+              :key="index"
+              v-for="(technology, index) in technologies"
+              style="margin: 10px"
+            >
+              <mdb-card-body>
+                <div class="d-flex flex-column align-items-center">
+                  <mdb-card-title>{{ technology.name }}</mdb-card-title>
+
+                  <mdb-btn
+                    @click="deleteTechnology(technology.id)"
+                    color="primary"
+                    >Supprimer</mdb-btn
+                  >
+                </div>
+              </mdb-card-body>
+            </mdb-card>
+          </mdb-container>
+        </mdb-modal-body>
+      </mdb-modal>
+    </mdb-container>
+    <!-- /Modal Delete Technologies-->
 
     <!-- Modal Add Project-->
     <mdb-container>
-      <mdb-modal :show="modalAdd" @close="modalAdd = false">
+      <mdb-modal :show="modalAddProject" @close="modalAddProject = false">
         <mdb-modal-header class="text-center">
           <mdb-modal-title tag="h4" bold class="w-100"
             >Ajouter un projet</mdb-modal-title
@@ -212,7 +241,7 @@
 
     <!-- Modal Delete Project-->
     <mdb-container>
-      <mdb-modal :show="modalDelete" @close="modalDelete = false">
+      <mdb-modal :show="modalDeleteProject" @close="modalDeleteProject = false">
         <mdb-modal-header class="text-center">
           <mdb-modal-title tag="h4" bold class="w-100"
             >Supprimer un projet</mdb-modal-title
@@ -276,7 +305,7 @@
 
                   <mdb-btn
                     @click="
-                      (modalUpdate = true),
+                      (modalUpdateProject = true),
                         (modalChooseProjectUpdate = false),
                         (idToUpdate = project.id),
                         resetForm(project)
@@ -293,7 +322,7 @@
     </mdb-container>
     <!-- /Choose Project -->
     <mdb-container>
-      <mdb-modal :show="modalUpdate" @close="modalUpdate = false">
+      <mdb-modal :show="modalUpdateProject" @close="modalUpdateProject = false">
         <mdb-modal-header class="text-center">
           <mdb-modal-title tag="h4" bold class="w-100"
             >Modifier un projet</mdb-modal-title
@@ -302,7 +331,9 @@
 
         <form
           enctype="multipart/form-data"
-          @submit.prevent="updateProject(idToUpdate), (modalUpdate = false)"
+          @submit.prevent="
+            updateProject(idToUpdate), (modalUpdateProject = false)
+          "
         >
           <mdb-modal-body class="mx-3 grey-text">
             <mdb-input
@@ -471,14 +502,16 @@ export default {
       //
       technologyName: [],
       projects: [],
+      technologies: [],
       // Modal variable
       principalModal: false,
       choice: null,
       modalAddTechnologies: false,
-      modalAdd: false,
-      modalDelete: false,
+      modalDeleteTechnologies: false,
       modalChooseProjectUpdate: false,
-      modalUpdate: false,
+      modalAddProject: false,
+      modalDeleteProject: false,
+      modalUpdateProject: false,
       idToUpdate: null,
       //
       formValue: {},
@@ -496,6 +529,7 @@ export default {
 
   mounted() {
     this.getProject();
+    this.getTechnologies();
   },
 
   methods: {
@@ -599,6 +633,22 @@ export default {
         this.imgPrincipalShow,
         this.imgSecondaryShow
       );
+    },
+
+    // API Route for Technologies
+    getTechnologies() {
+      get.getTechnologies().then((res) => (this.technologies = res));
+    },
+
+    postTechnologies() {
+      var data = {
+        name: this.technologyName,
+      };
+      post.postTechnologies(data);
+    },
+
+    deleteTechnology(id) {
+      destroy.deleteTechnology(id);
     },
 
     getUsers() {
