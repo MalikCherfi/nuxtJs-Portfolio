@@ -1,6 +1,6 @@
 <template>
   <div class="Projects-id">
-    <div class="container position-relative w-100" style="z-index: 3">
+    <div class="container position-relative w-100" style="z-index: 1050">
       <!-- Boutton Retour -->
       <div class="d-flex">
         <NuxtLink to="./">
@@ -29,9 +29,18 @@
           </mdb-modal-header>
           <mdb-modal-body>
             <p>Année: {{ project.years }}</p>
+            <h2>Description :</h2>
             <p class="details">
               {{ project.details }}
             </p>
+            <h2>Compétences associées :</h2>
+            <div
+              :key="index"
+              v-for="(object, index) in project.technologies"
+              style="background-color: red; border-radius: 10px"
+            >
+              <p>{{ object.technology.name }}</p>
+            </div>
           </mdb-modal-body>
           <mdb-modal-footer>
             <a :href="project.link" target="_blank">
@@ -115,6 +124,7 @@
 </template>
 
 <script>
+import axios from "@/helper/axios.config.js";
 const get = require("@/data/get.js");
 import "viewerjs/dist/viewer.css";
 import { component as Viewer } from "v-viewer";

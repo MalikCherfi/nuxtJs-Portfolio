@@ -229,7 +229,7 @@
 
           <mdb-modal-footer center>
             <input
-              @click="modalAdd = false"
+              @click="modalAddProject = false"
               class="btn btn-unique"
               type="submit"
             />
