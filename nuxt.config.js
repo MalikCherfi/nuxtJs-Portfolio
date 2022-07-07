@@ -36,7 +36,39 @@ export default {
   buildModules: ["@braid/vue-formulate/nuxt"],
 
   // Modules: https://go.nuxtjs.dev/config-modules
-  modules: ["@nuxtjs/dotenv", "mdbvue/nuxt"],
+  modules: [
+    "@nuxtjs/dotenv",
+    "mdbvue/nuxt",
+    "@nuxtjs/axios",
+    "@nuxtjs/auth-next",
+  ],
+
+  auth: {
+    strategies: {
+      local: {
+        token: {
+          property: "token",
+          required: true,
+          type: "",
+        },
+        user: { property: false, autoFetch: false },
+        endpoints: {
+          login: {
+            url: `${process.env.VUE_APP_API_URL}/session`,
+            method: "post",
+          },
+          logout: {
+            url: `${process.env.VUE_APP_API_URL}/auth/logout`,
+            method: "post",
+          },
+          user: {
+            url: `${process.env.VUE_APP_API_URL}/session/user`,
+            method: "get",
+          },
+        },
+      },
+    },
+  },
 
   mdbvue: {
     icons: true, // FA5
