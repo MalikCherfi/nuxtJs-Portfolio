@@ -25,19 +25,15 @@
               >Admin</mdb-nav-item
             ></NuxtLink
           >
+          <div v-if="$auth.loggedIn">
+            NIIIIIIICE
+          </div>
+          <NuxtLink v-else to="/Login"
+            ><mdb-nav-item waves-fixed class="item"
+              >Login</mdb-nav-item
+            ></NuxtLink
+          >
         </mdb-navbar-nav>
-        <form>
-          <mdb-input
-            type="text"
-            class="text-white"
-            placeholder="Search"
-            aria-label="Search"
-            label
-            navInput
-            waves
-            waves-fixed
-          />
-        </form>
       </mdb-navbar-toggler>
     </mdb-navbar>
     <!-- <div class="view">
