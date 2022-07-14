@@ -41,32 +41,39 @@ export default {
     "mdbvue/nuxt",
     "@nuxtjs/axios",
     "@nuxtjs/auth-next",
+    '@nuxtjs/toast',
   ],
+
+  axios: {
+    baseURL: "http://localhost:8000",
+  },
 
   auth: {
     strategies: {
       local: {
-        token: {
-          property: "token",
-          required: true,
-          type: "",
-        },
-        user: { property: false, autoFetch: false },
         endpoints: {
           login: {
-            url: `${process.env.VUE_APP_API_URL}/session`,
+            url: "/api/session",
             method: "post",
           },
           logout: {
-            url: `${process.env.VUE_APP_API_URL}/auth/logout`,
-            method: "post",
+            url: "/api/session/logout",
+            method: "get",
           },
           user: {
-            url: `${process.env.VUE_APP_API_URL}/session/user`,
+            property: "user",
+            url: "/api/session/user",
             method: "get",
           },
         },
+        tokenRequired: true,
+        tokenType: "",
       },
+    },
+    redirect: {
+      login: "/login",
+      logout: "/",
+      home: "/Admin",
     },
   },
 

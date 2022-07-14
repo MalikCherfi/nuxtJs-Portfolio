@@ -470,6 +470,7 @@ import {
 
 export default {
   name: "Admin",
+  middleware: "auth",
   components: {
     mdbCard,
     mdbCardImage,

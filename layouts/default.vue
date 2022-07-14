@@ -20,29 +20,29 @@
               >Compétences</mdb-nav-item
             ></NuxtLink
           >
-          <NuxtLink to="/Admin"
+          <NuxtLink v-if="$auth.loggedIn" to="/Admin"
             ><mdb-nav-item waves-fixed class="item"
               >Admin</mdb-nav-item
             ></NuxtLink
           >
+        </mdb-navbar-nav>
+        <div class="item" style="margin-right: 70px">
           <div v-if="$auth.loggedIn">
-            NIIIIIIICE
+            <mdb-btn @click="deleteCookie()" class="btn btn-default"
+              >Se déconnecter</mdb-btn
+            >
           </div>
           <NuxtLink v-else to="/Login"
             ><mdb-nav-item waves-fixed class="item"
-              >Login</mdb-nav-item
+              >Se connecter</mdb-nav-item
             ></NuxtLink
           >
-        </mdb-navbar-nav>
+        </div>
       </mdb-navbar-toggler>
     </mdb-navbar>
-    <!-- <div class="view">
-      <div class="nav-container"> -->
     <div class="view">
       <Nuxt />
     </div>
-    <!-- </div>
-    </div> -->
   </div>
 </template>
 
@@ -67,6 +67,21 @@ export default {
     mdbNavbarBrand,
     mdbIcon,
   },
+  methods: {
+    deleteCookie() {
+      localStorage.setItem("auth._token.local", false);
+
+      document.cookie =
+        "auth._token.local" +
+        "=" +
+        "false" +
+        ("/" ? ";path=" + "/" : "") +
+        ("localhost" ? ";domain=" + "localhost" : "");
+
+      location.reload();
+      window.location.replace("http://localhost:3000");
+    },
+  },
 };
 </script>
 
@@ -75,6 +90,8 @@ export default {
 
 .item {
   font-family: "Roboto Mono", monospace;
+  list-style: none;
+  color: white;
 }
 
 .navbar .dropdown-menu a:hover {
