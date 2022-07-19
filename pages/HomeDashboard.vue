@@ -26,7 +26,6 @@
 </template>
 
 <script>
-import axios from "@/helper/axios.config.js";
 import {
   mdbContainer,
   mdbRow,
@@ -92,7 +91,7 @@ export default {
       window.addEventListener("scroll", () => {
         let value = window.scrollY;
 
-        text.style.top = `${50 + value * -0.5}%`;
+        text.style.top = `${60 + value * -0.5}%`;
         bird1.style.top = `${value * -1.5}px`;
         // bird1.style.left = `${value * 2}px`;
         bird2.style.top = `${value * -1.5}px`;
@@ -107,40 +106,6 @@ export default {
 
 <style scoped>
 @import url("https://fonts.googleapis.com/css2?family=Rancho&family=Roboto&display=swap");
-
-.content {
-  position: relative;
-  padding: 100px;
-  background: #094b65;
-  display: flex;
-  flex-direction: column;
-}
-
-.menu {
-  font-family: "Rancho", cursive;
-  color: white;
-  cursor: pointer;
-  z-index: 1000;
-  text-shadow: 5px 5px black;
-  transition-duration: 300ms;
-}
-
-.menu:hover {
-  transform: translateY(-10px) translateX(-10px);
-  text-shadow: 10px 10px black;
-  transition-duration: 300ms;
-}
-
-.content::before {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 400px;
-  background: linear-gradient(to top, black, transparent);
-  z-index: 10;
-}
 
 .section {
   position: static;
@@ -162,7 +127,42 @@ export default {
   z-index: 10;
 }
 
+.content {
+  position: relative;
+  padding: 100px;
+  background: #094b65;
+  display: flex;
+  flex-direction: column;
+}
+
+.content::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 400px;
+  background: linear-gradient(to top, black, transparent);
+  z-index: 10;
+}
+
+.menu {
+  font-family: "Rancho", cursive;
+  color: white;
+  cursor: pointer;
+  z-index: 1000;
+  text-shadow: 5px 5px black;
+  transition-duration: 300ms;
+}
+
+.menu:hover {
+  transform: translateY(-10px) translateX(-10px);
+  text-shadow: 10px 10px black;
+  transition-duration: 300ms;
+}
+
 #text {
+  bottom: 170px;
   position: absolute;
   color: #094b65;
   font-size: 10vw;
