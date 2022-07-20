@@ -48,8 +48,14 @@
               </p>
             </div>
           </NuxtLink>
-          <div class="secondary-circle-title"></div>
-          <div class="third-circle-title"></div>
+          <div
+            class="secondary-circle-title"
+            :style="{ 'background-color': random[index].first }"
+          ></div>
+          <div
+            class="third-circle-title"
+            :style="{ 'background-color': random[index].second }"
+          ></div>
           <!-- /Circle Title -->
 
           <!-- Rectangle Link -->
@@ -60,9 +66,18 @@
               </p>
             </a>
           </div>
-          <div class="secondary-rectangle-link"></div>
-          <div class="third-rectangle-link"></div>
-          <div class="four-rectangle-link"></div>
+          <div
+            class="secondary-rectangle-link"
+            :style="{ 'background-color': random[index].first }"
+          ></div>
+          <div
+            class="third-rectangle-link"
+            :style="{ 'background-color': random[index].second }"
+          ></div>
+          <div
+            class="four-rectangle-link"
+            :style="{ 'background-color': random[index].third }"
+          ></div>
           <!-- /Rectangle Link -->
         </div>
         <!-- /Div Container -->
@@ -122,6 +137,7 @@ export default {
   data() {
     return {
       projects: [],
+      random: [],
     };
   },
   mounted() {
@@ -133,6 +149,7 @@ export default {
     },
   },
   created() {
+    this.randomColor();
     window.addEventListener("scroll", this.handleScroll);
   },
   destroyed() {
@@ -161,6 +178,23 @@ export default {
         rocks.style.top = `${value * -0.12}px`;
         forest.style.top = `${value * 0.25}px`;
       });
+    },
+
+    randomColor() {
+      var color = [
+        { first: "#B5D6B2", second: "#53131E", third: "#5A464C" },
+        { first: "#F5F749", second: "#F24236", third: "#2E86AB" },
+        { first: "#241023", second: "#6B0504", third: "#A3320B" },
+        { first: "#75DBCD", second: "#FAA381", third: "#F5CDA7" },
+        { first: "#e76f51", second: "#2a9d8f", third: "#f4a261" },
+        { first: "#fb8500", second: "#ffb703", third: "#023047" },
+        { first: "#293241", second: "#ee6c4d", third: "#e0fbfc" },
+        { first: "#5f0f40", second: "#9a031e", third: "#fb8b24" },
+        { first: "#355070", second: "#6d597a", third: "#b56576" },
+      ];
+      for (let index = 0; index < color.length; index++) {
+        this.random.push(color[Math.floor(Math.random() * color.length)]);
+      }
     },
   },
 };
@@ -268,7 +302,7 @@ img {
 .secondary-circle-title {
   box-shadow: 0px 0px 0px black;
   border-radius: 150px;
-  background-color: #5a464c;
+  /* background-color: #5a464c; */
   position: absolute;
   left: 160px;
   top: 360px;
@@ -290,7 +324,7 @@ img {
   z-index: 11;
   box-shadow: 0px 0px 0px black;
   border-radius: 150px;
-  background-color: #53131e;
+  /* background-color: #53131e; */
   position: absolute;
   left: 450px;
   top: 540px;
@@ -346,7 +380,7 @@ img {
   z-index: 11;
   height: 30px;
   width: 100px;
-  background-color: #53131e;
+  /* background-color: #53131e; */
   position: absolute;
   right: 0px;
   top: 140px;
@@ -364,7 +398,7 @@ img {
   z-index: 11;
   height: 10px;
   width: 20px;
-  background-color: #b5d6b2;
+  /* background-color: #b5d6b2; */
   position: absolute;
   right: 0px;
   top: 120px;
@@ -382,7 +416,7 @@ img {
   z-index: 11;
   height: 20px;
   width: 100px;
-  background-color: #5a464c;
+  /* background-color: #5a464c; */
   position: absolute;
   right: 0px;
   top: 85px;
