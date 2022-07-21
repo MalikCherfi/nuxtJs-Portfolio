@@ -34,12 +34,6 @@
       <!-- Card -->
     </div>
     <!-- Material form login -->
-
-    <!-- Background Images -->
-    <img class="background" src="@/static/forest.png" id="forest" />
-    <img class="background" src="@/static/rocks.png" id="rocks" />
-    <img class="background" src="@/static/water.png" id="water" />
-    <!-- !Background Images -->
   </div>
 </template>
 
@@ -86,16 +80,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  object-fit: cover;
-  z-index: 2;
-}
-</style>

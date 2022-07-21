@@ -41,6 +41,11 @@
       </mdb-navbar-toggler>
     </mdb-navbar>
     <div class="view">
+      <img src="../static/bird1.png" id="bird1" />
+      <img src="../static/bird2.png" id="bird2" />
+      <img src="../static/forest.png" id="forest" />
+      <img src="../static/rocks.png" id="rocks" />
+      <img src="../static/water.png" id="water" />
       <Nuxt />
     </div>
   </div>
@@ -110,5 +115,16 @@ export default {
   background-size: cover;
   min-height: 100vh;
   position: static;
+}
+
+img {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  object-fit: cover;
 }
 </style>

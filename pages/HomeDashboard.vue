@@ -6,11 +6,27 @@
         <br />
         My Projects
       </h2>
-      <img src="../static/bird1.png" id="bird1" />
-      <img src="../static/bird2.png" id="bird2" />
-      <img src="../static/forest.png" id="forest" />
-      <img src="../static/rocks.png" id="rocks" />
-      <img src="../static/water.png" id="water" />
+      <div class="fish-container">
+        <lottie
+          class="fish-animation"
+          :options="lottieOptions.fish"
+          v-on:animCreated="handleAnimation($event, 'fishAnim')"
+        />
+        <lottie
+          class="splash-animation-1"
+          :width="100"
+          :height="100"
+          :options="lottieOptions.splash1"
+          v-on:animCreated="handleAnimation($event, 'splashAnim1')"
+        />
+        <lottie
+          class="splash-animation-2"
+          :width="100"
+          :height="100"
+          :options="lottieOptions.splash2"
+          v-on:animCreated="handleAnimation($event, 'splashAnim2')"
+        />
+      </div>
     </div>
     <div class="content">
       <div class="d-flex justify-content-around">
@@ -26,6 +42,11 @@
 </template>
 
 <script>
+const scroll = require("@/helper/handleScroll.js");
+import lottie from "vue-lottie/src/lottie.vue";
+import * as fishAnimation from "~/static/animation/fish.json";
+import * as splashAnimation1 from "~/static/animation/water-splash-1.json";
+import * as splashAnimation2 from "~/static/animation/water-splash-2.json";
 import {
   mdbContainer,
   mdbRow,
@@ -66,6 +87,22 @@ export default {
     mdbView,
     mdbMask,
     mdbIcon,
+    lottie,
+  },
+
+  data() {
+    return {
+      anim: {
+        fishAnim: null,
+        splashAnim1: null,
+        splashAnim2: null,
+      },
+      lottieOptions: {
+        fish: { animationData: fishAnimation.default, loop: false },
+        splash1: { animationData: splashAnimation1.default, loop: false },
+        splash2: { animationData: splashAnimation2.default, loop: false },
+      },
+    };
   },
 
   computed: {
@@ -74,31 +111,36 @@ export default {
     },
   },
   created() {
-    window.addEventListener("scroll", this.handleScroll);
+    window.addEventListener("scroll", scroll.handleScroll);
   },
   destroyed() {
-    window.removeEventListener("scroll", this.handleScroll);
+    window.removeEventListener("scroll", scroll.handleScroll);
   },
 
   methods: {
-    handleScroll() {
-      var text = document.getElementById("text");
-      var bird1 = document.getElementById("bird1");
-      var bird2 = document.getElementById("bird2");
-      var forest = document.getElementById("forest");
-      var rocks = document.getElementById("rocks");
+    handleAnimation(anim, type) {
+      this.anim[type] = anim;
 
-      window.addEventListener("scroll", () => {
-        let value = window.scrollY;
+      setTimeout(() => {
+        this.anim["fishAnim"].stop();
+      }, 100);
+      setTimeout(() => {
+        this.anim["fishAnim"].play();
+      }, 1500);
 
-        text.style.top = `${60 + value * -0.5}%`;
-        bird1.style.top = `${value * -1.5}px`;
-        // bird1.style.left = `${value * 2}px`;
-        bird2.style.top = `${value * -1.5}px`;
-        // bird2.style.left = `${value * -5}px`;
-        rocks.style.top = `${value * -0.12}px`;
-        forest.style.top = `${value * 0.25}px`;
-      });
+      setTimeout(() => {
+        this.anim["splashAnim1"].stop();
+      }, 100);
+      setTimeout(() => {
+        this.anim["splashAnim1"].play();
+      }, 2800);
+
+      setTimeout(() => {
+        this.anim["splashAnim2"].stop();
+      }, 100);
+      setTimeout(() => {
+        this.anim["splashAnim2"].play();
+      }, 1500);
     },
   },
 };
@@ -124,10 +166,11 @@ export default {
   width: 100%;
   height: 100px;
   background: linear-gradient(to top, #094b65, transparent);
-  z-index: 10;
+  z-index: 1;
 }
 
 .content {
+  z-index: 1;
   position: relative;
   padding: 100px;
   background: #094b65;
@@ -162,6 +205,7 @@ export default {
 }
 
 #text {
+  z-index: 0;
   bottom: 170px;
   position: absolute;
   color: #094b65;
@@ -175,13 +219,26 @@ export default {
   letter-spacing: 2px;
   font-weight: 400;
 }
-img {
+
+.fish-container {
+  z-index: 1;
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  object-fit: cover;
+  bottom: 100px;
+  width: 400px;
+  height: 300px;
+}
+
+.fish-animation {
+  position: absolute;
+}
+
+.splash-animation-1 {
+  position: absolute;
+  transform: translateY(250px) translateX(50px);
+}
+
+.splash-animation-2 {
+  position: absolute;
+  transform: translateY(250px) translateX(260px);
 }
 </style>
